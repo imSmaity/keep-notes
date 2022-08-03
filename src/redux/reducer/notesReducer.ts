@@ -13,7 +13,7 @@ const initialValue = () => {
 	return {
 		_id: '62e7e64a88eb3a461f1dbd61',
 		name: 'Keep Notes',
-		notes: [[]],
+		notes: [],
 		theme: 'orange',
 		created: new Date().toLocaleString(),
 	};

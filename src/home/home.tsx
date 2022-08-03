@@ -1,12 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import * as React from 'react';
-import {
-	styled,
-	useTheme,
-	Theme,
-	CSSObject,
-	makeStyles,
-} from '@mui/material/styles';
+import { styled, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
@@ -14,18 +8,12 @@ import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import FormatPaintIcon from '@mui/icons-material/FormatPaint';
-// import StickyNote2Icon from '@mui/icons-material/StickyNote2';
-// import PaletteIcon from '@mui/icons-material/Palette';
 import TakeANote from './TakeANote';
 import Notes from './Notes';
 import Colors from '../components/Colors';
@@ -120,7 +108,6 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 const Home = () => {
-	const theme = useTheme();
 	const [isTyping, setIsTyping] = React.useState(false);
 	const [open, setOpen] = React.useState(false);
 	const [isOpenColorPad, setIsOpenColorPad] = React.useState(false);
@@ -155,9 +142,7 @@ const Home = () => {
 						sx={{
 							marginRight: 5,
 							...(open && { display: 'none' }),
-						}}>
-						{/* <MenuIcon /> */}
-					</IconButton>
+						}}></IconButton>
 					<Typography
 						variant='h6'
 						noWrap
