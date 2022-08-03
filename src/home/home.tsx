@@ -1,6 +1,12 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as React from 'react';
-import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
+import {
+	styled,
+	useTheme,
+	Theme,
+	CSSObject,
+	makeStyles,
+} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
@@ -17,14 +23,30 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import DeleteIcon from '@mui/icons-material/Delete';
-import StickyNote2Icon from '@mui/icons-material/StickyNote2';
-import PaletteIcon from '@mui/icons-material/Palette';
+import FormatPaintIcon from '@mui/icons-material/FormatPaint';
+// import StickyNote2Icon from '@mui/icons-material/StickyNote2';
+// import PaletteIcon from '@mui/icons-material/Palette';
 import TakeANote from './TakeANote';
 import Notes from './Notes';
+import Colors from '../components/Colors';
+import { User } from '../Types';
+import { touch } from '../redux/actions/notesAction';
 
 const AppTheme = () => {
-	return <Box></Box>;
+	const dispatch = useDispatch();
+	const user = useSelector(
+		(state: { notesReducer: User }) => state.notesReducer
+	);
+	const [currColor, setColor] = React.useState(user.theme);
+	React.useEffect(() => {
+		if (user.theme !== currColor)
+			touch.themeChangeing(dispatch, { ...user, theme: currColor });
+	}, [currColor]);
+	return (
+		<Box sx={{ marginLeft: '-23rem', mt: 2 }}>
+			<Colors setColor={setColor} display={'column'} />
+		</Box>
+	);
 };
 const drawerWidth = 240;
 
@@ -101,19 +123,29 @@ const Home = () => {
 	const theme = useTheme();
 	const [isTyping, setIsTyping] = React.useState(false);
 	const [open, setOpen] = React.useState(false);
+	const [isOpenColorPad, setIsOpenColorPad] = React.useState(false);
+	const user = useSelector(
+		(state: { notesReducer: User }) => state.notesReducer
+	);
 
 	const handleDrawerOpen = () => {
 		setOpen(true);
 	};
 
-	const handleDrawerClose = () => {
-		setOpen(false);
-	};
+	// const handleDrawerClose = () => {
+	// 	setOpen(false);
+	// };
+	const dispatch = useDispatch();
+	React.useEffect(() => {
+		touch.searchingUser(dispatch);
+	}, []);
 
 	return (
 		<Box sx={{ display: 'flex' }}>
 			<CssBaseline />
-			<AppBar position='fixed' open={open}>
+			<AppBar
+				position='fixed'
+				sx={{ backgroundColor: user.theme, boxShadow: 0 }}>
 				<Toolbar>
 					<IconButton
 						color='inherit'
@@ -124,31 +156,39 @@ const Home = () => {
 							marginRight: 5,
 							...(open && { display: 'none' }),
 						}}>
-						<MenuIcon />
+						{/* <MenuIcon /> */}
 					</IconButton>
-					<Typography variant='h6' noWrap component='div'>
+					<Typography
+						variant='h6'
+						noWrap
+						component='div'
+						sx={{
+							color:
+								user.theme === 'white' || user.theme === 'yellow'
+									? 'black'
+									: 'white',
+						}}>
 						Take Notes
 					</Typography>
 				</Toolbar>
 			</AppBar>
-			<Drawer variant='permanent' open={open}>
-				<DrawerHeader>
-					<IconButton onClick={handleDrawerClose}>
-						{theme.direction === 'rtl' ? (
-							<ChevronRightIcon />
-						) : (
-							<ChevronLeftIcon />
-						)}
-					</IconButton>
-				</DrawerHeader>
-				<Divider />
+			<Drawer variant='permanent'>
+				<DrawerHeader></DrawerHeader>
+
 				<List>
 					{[
-						{ title: 'Notes', icon: <StickyNote2Icon /> },
-						{ title: 'Trash', icon: <DeleteIcon /> },
-						{ title: 'theme', colors: <AppTheme /> },
-					].map((text, index) => (
-						<ListItem key={text.title} disablePadding sx={{ display: 'block' }}>
+						// { title: 'Notes', icon: <StickyNote2Icon />, onclick: () => {} },
+						{
+							title: 'Theme',
+							icon: <FormatPaintIcon />,
+							onclick: () => setIsOpenColorPad(!isOpenColorPad),
+						},
+					].map((list, index) => (
+						<ListItem
+							key={list.title}
+							disablePadding
+							sx={{ display: 'block' }}
+							onClick={list.onclick}>
 							<ListItemButton
 								sx={{
 									minHeight: 48,
@@ -161,20 +201,23 @@ const Home = () => {
 										mr: open ? 3 : 'auto',
 										justifyContent: 'center',
 									}}></ListItemIcon>
-								{text.title !== 'theme' && text.icon}
-								{!open && text.title === 'theme' && <PaletteIcon />}
-								{text.title !== 'theme' && (
-									<ListItemText
-										primary={text.title}
-										sx={{ opacity: open ? 1 : 0 }}
-									/>
-								)}
+								{list.icon}
+								<ListItemText
+									primary={list.title}
+									sx={{ opacity: open ? 1 : 0 }}
+								/>
 							</ListItemButton>
 						</ListItem>
 					))}
+					{!isOpenColorPad && <AppTheme />}
 				</List>
 			</Drawer>
-			<Box component='main' sx={{ flexGrow: 1, p: 3 }}>
+			<Box
+				component='main'
+				sx={{
+					flexGrow: 1,
+					p: 3,
+				}}>
 				<DrawerHeader />
 				<TakeANote typing={{ isTyping, setIsTyping }} />
 				<Notes />

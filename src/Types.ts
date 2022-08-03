@@ -2,16 +2,16 @@ export type Note = {
 	id: number;
 	title: string;
 	details: string;
+	pined: boolean;
+	lastEditedNote: string;
 	tags: Array<string>;
 	backgroundColor: { active: boolean; color: string };
 };
 
 export type User = {
-	id: string;
+	_id: string;
 	name: string;
-	notes: Array<Note>;
-	trash: Array<Note>;
-	lastEditedNote: Array<string>;
+	notes: Array<Array<Note>>;
 	theme: string;
 	created: string;
 };
